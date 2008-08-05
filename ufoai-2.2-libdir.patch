@@ -1,0 +1,23 @@
+--- ufoai-2.2-source/src/common/files.c.orig	2007-12-10 08:29:39.000000000 +0000
++++ ufoai-2.2-source/src/common/files.c	2008-02-26 13:55:38.000000000 +0000
+@@ -35,6 +35,7 @@
+ /* in memory */
+ 
+ static cvar_t *fs_basedir;
++static cvar_t *fs_libdir;
+ cvar_t *fs_gamedir;
+ 
+ typedef struct filelink_s {
+@@ -894,6 +895,12 @@
+ 	/* start up with base by default */
+ 	FS_AddGameDirectory(va("%s/" BASEDIRNAME, fs_basedir->string));
+ 
++	/* allows the game to search the library dirs */
++	fs_libdir = Cvar_Get("fs_libdir", ".", CVAR_NOSET, "Allows the game to search the library dirs");
++
++	/* start up with empty path by default */
++	FS_AddGameDirectory(va("%s", fs_libdir->string));
++
+ 	/* then add a '.ufoai/base' directory in home directory by default */
+ 	if (fs_usehomedir->integer)
+ 		FS_AddHomeAsGameDirectory(BASEDIRNAME);

@@ -1,0 +1,22 @@
+[Desktop Entry]
+Name=UFO:AI Dedicated Server
+GenericName=Strategy Game (server)
+GenericName[cs]=Strategická hra (server)
+GenericName[da]=Strategispil (server)
+GenericName[de]=Strategiespiel (Server)
+GenericName[es]=Juego de estrategia (servidor)
+GenericName[et]=Strateegiamäng
+GenericName[fi]=Avaruuspeli (palvelin)
+GenericName[fr]=Jeu de stratégie (serveur)
+GenericName[it]=Gioco di strategia (server)
+GenericName[pl]=Gra strategiczna (serwer)
+GenericName[pt_BR]=Jogo de Estratégia (servidor)
+GenericName[ru]=Завоевание (сервер)
+GenericName[sl]=Strateška igra (strežnik)
+GenericName[sv]=Strategispel (värddator)
+Comment=UFO: Alien Invasion Dedicated Server
+Exec=ufoded-wrapper.sh
+Icon=ufoai-ded
+Terminal=false
+Type=Application
+Categories=Game;StrategyGame;
