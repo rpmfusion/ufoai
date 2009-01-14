@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.2.1
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -134,22 +134,29 @@ fi
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 # we need to use full path so %doc does not the cleanup
+%dir %{_docdir}/%{name}-%{version}
 %doc %{_docdir}/%{name}-%{version}/README
 %doc %{_docdir}/%{name}-%{version}/CONTRIBUTORS
 %doc %{_docdir}/%{name}-%{version}/COPYING
 %{_bindir}/*
 %{_libdir}/%{name}/
-%{_datadir}/applications/
+%{_datadir}/applications/*
+%dir %{_datadir}/icons/hicolor/
+%dir %{_datadir}/icons/hicolor/32x32/
 %{_datadir}/icons/hicolor/32x32/apps/
 
 
 %files doc
 %defattr(-,root,root,-)
+%dir %{_docdir}/%{name}-%{version}
 %doc %{_docdir}/%{name}-%{version}/*.pdf
 %lang(en) %{_docdir}/%{name}-%{version}/ufo-manual_EN.pdf
 
 
 %changelog
+* Wed Jan 14 2009 Karel Volny <kvolny@redhat.com> 2.2.1-3
+- Fixed unowned directories (bug #225)
+
 * Mon Aug 04 2008 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info - 2.2.1-2
 - rebuild
 
