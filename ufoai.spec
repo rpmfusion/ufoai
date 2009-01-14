@@ -140,7 +140,9 @@ fi
 %doc %{_docdir}/%{name}-%{version}/COPYING
 %{_bindir}/*
 %{_libdir}/%{name}/
-%{_datadir}/applications/
+%{_datadir}/applications/*
+%dir %{_datadir}/icons/hicolor/
+%dir %{_datadir}/icons/hicolor/32x32/
 %{_datadir}/icons/hicolor/32x32/apps/
 
 
