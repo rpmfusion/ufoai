@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.2.1
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -154,6 +154,9 @@ fi
 
 
 %changelog
+* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 2.2.1-4
+- rebuild for new F11 features
+
 * Thu Dec 11 2008 Karel Volny <kvolny@redhat.com> 2.2.1-3
 - Fixed unowned directories (bug #225)
 
