@@ -1,0 +1,52 @@
+--- build/game.mk~	2010-06-13 09:47:44.000000000 +0200
++++ build/game.mk	2010-07-20 18:28:01.709381425 +0200
+@@ -29,38 +29,7 @@
+ 	game/g_svcmds.c \
+ 	game/g_trigger.c \
+ 	game/g_utils.c \
+-	game/g_vis.c \
+-	\
+-	game/lua/lapi.c \
+-	game/lua/lauxlib.c \
+-	game/lua/lbaselib.c \
+-	game/lua/lcode.c \
+-	game/lua/ldblib.c \
+-	game/lua/ldebug.c \
+-	game/lua/ldo.c \
+-	game/lua/ldump.c \
+-	game/lua/lfunc.c \
+-	game/lua/lgc.c \
+-	game/lua/linit.c \
+-	game/lua/liolib.c \
+-	game/lua/llex.c \
+-	game/lua/lmathlib.c \
+-	game/lua/lmem.c \
+-	game/lua/loadlib.c \
+-	game/lua/lobject.c \
+-	game/lua/lopcodes.c \
+-	game/lua/loslib.c \
+-	game/lua/lparser.c \
+-	game/lua/lstate.c \
+-	game/lua/lstring.c \
+-	game/lua/lstrlib.c \
+-	game/lua/ltable.c \
+-	game/lua/ltablib.c \
+-	game/lua/ltm.c \
+-	game/lua/lundump.c \
+-	game/lua/lvm.c \
+-	game/lua/lzio.c \
+-	game/lua/print.c
++	game/g_vis.c
+ 
+ ifneq ($(HARD_LINKED_GAME),1)
+ 	GAME_SRCS+= \
+--- Makefile.in~        2010-05-14 19:27:14.000000000 +0200
++++ Makefile.in 2010-09-14 13:52:12.144729441 +0200
+@@ -25,7 +25,7 @@
+ 
+ CLIENT_LIBS=@CLIENT_LIBS@
+ SERVER_LIBS=@SERVER_LIBS@
+-GAME_LIBS=@GAME_LIBS@
++GAME_LIBS=@GAME_LIBS@ -llua -ldl
+ TOOLS_LIBS=@TOOLS_LIBS@
+ RADIANT_LIBS=@RADIANT_LIBS@

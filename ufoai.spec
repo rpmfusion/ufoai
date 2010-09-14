@@ -1,25 +1,42 @@
 Name:		ufoai
-Version:	2.2.1
-Release:	4%{?dist}
+Version:	2.3
+Release:	1%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
 License:	GPLv2+
 URL:		http://ufoai.sourceforge.net/
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}-source.tar.bz2
-Source1:	%{name}.desktop
-Source2:	%{name}-ded.desktop
-Patch:		ufoai-2.2-libdir.patch
+Source1:	%{name}-wrapper.sh
+Source2:	uforadiant-wrapper.sh
+Patch0:		ufoai-2.3-no-lua.patch
+Patch1:		ufoai-2.3-radiant-ldl.patch
+Patch2:		ufoai-2.3-desktop-files.patch
+Patch3:		ufoai-2.3-libdir.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:	desktop-file-utils curl-devel freealut-devel gettext
-BuildRequires:	libjpeg-devel libogg-devel libpng-devel libvorbis-devel
-BuildRequires:	libXxf86dga-devel libXxf86vm-devel SDL-devel SDL_mixer-devel
+BuildRequires:	libjpeg-devel libogg-devel libpng-devel
+BuildRequires:	libtheora-devel
+BuildRequires:	libvorbis-devel
+BuildRequires:	libXxf86dga-devel libXxf86vm-devel
+BuildRequires:	lua-devel
+BuildRequires:	SDL-devel
+BuildRequires:	SDL_image-devel
+BuildRequires:	SDL_mixer-devel
 BuildRequires:	SDL_ttf-devel
+# in RPMFusion-free; substituted with libtheora-devel
+#BuildRequires:	xvidcore-devel
 
 Requires:	opengl-games-utils
+Requires:	%{name}-common = %{version}
 Requires:	%{name}-data = %{version}
+Requires:	%{name}-data-server = %{version}
+
+
+%package common
+Summary:	UFO: Alien Invasion shared files
 
 
 %package doc
@@ -27,6 +44,25 @@ Summary:	UFO: Alien Invasion user manual
 Group:		Documentation
 License:	GFDL
 BuildRequires:	tetex-latex
+
+
+%package server
+Summary:	UFO: Alien Invasion dedicated server
+Requires:	%{name}-data-server = %{version}
+Requires:	%{name}-common = %{version}
+
+
+%package tools
+Summary:	UFO: Alien Invasion developer tools
+Group:		Development/Tools
+
+
+%package uforadiant
+Summary:	UFO: Alien Invasion map editor
+Group:		Development/Tools
+BuildRequires:	gtkglext-devel
+BuildRequires:	gtksourceview2-devel
+Requires:	%{name}-ufo2map
 
 
 %description
@@ -39,6 +75,14 @@ aliens and their technologies in order to learn as much as possible
 about their technology, their goals and the aliens themselves.
 
 
+%description common
+UFO: ALIEN INVASION is a strategy game featuring tactical combat
+against hostile alien forces which are about to infiltrate earth at
+this very moment.
+
+This package contains files common both to the client and the server.
+
+
 %description doc
 UFO: ALIEN INVASION is a strategy game featuring tactical combat
 against hostile alien forces which are about to infiltrate earth at
@@ -47,70 +91,114 @@ this very moment.
 This package contains the user manual for the game.
 
 
+%description server
+UFO: ALIEN INVASION is a strategy game featuring tactical combat
+against hostile alien forces which are about to infiltrate earth at
+this very moment.
+
+This package contains the UFO:AI dedicated server.
+
+
+%description tools
+UFO: ALIEN INVASION is a strategy game featuring tactical combat
+against hostile alien forces which are about to infiltrate earth at
+this very moment.
+
+This package contains the developer tools.
+
+
+%description uforadiant
+UFO: ALIEN INVASION is a strategy game featuring tactical combat
+against hostile alien forces which are about to infiltrate earth at
+this very moment.
+
+This package contains the UFORadiant map editor.
+
+
 %prep
 %setup -q -n %{name}-%{version}-source
+# allow to set the library path
+#%patch -p1
+# ufoai-2.3-no-lua.patch - disable bundled lua
+%patch0 -p0
+# ufoai-2.3-radiant-ldl.patch - add 'ldl' to RADIANT_LIBS
+%patch1 -p0
+# ufoai-2.3-desktop-files.patch - fix executable and icon names
+%patch2 -p0
 ## we do not like "arch-dependent-file" in /usr/share
 # change the target for the library
 sed -i -e "s/base/./" build/game.mk
-# allow to set the library path
-%patch -p1
+# ufoai-2.3-libdir.patch - search for the library within system library path
+%patch3 -p0
 
 
 %build
-%configure --disable-ufo2map --enable-release
+#%configure --disable-ufo2map --disable-uforadiant --enable-release
+%configure --enable-release
 make %{?_smp_mflags}
 make %{?_smp_mflags} lang
-# wrapper scripts - generated because we need arch dependent paths
-cat > %{name}-wrapper.sh <<-EOF
-#!/bin/sh
-
-. /usr/share/opengl-games-utils/opengl-game-functions.sh
-
-checkDriOK UFO:AI
-
-exec ufo \\
-	+set fs_libdir %{_libdir}/%{name} \\
-	+set fs_basedir %{_datadir}/%{name} \\
-	+set fs_i18ndir %{_datadir}/locale \\
-	"\$@"
-EOF
-
-cat > ufoded-wrapper.sh <<-EOF
-#!/bin/sh
-
-exec ufoded \\
-	+set fs_libdir %{_libdir}/%{name} \\
-	+set fs_basedir %{_datadir}/%{name} \\
-	+set fs_i18ndir %{_datadir}/locale \\
-	"\$@"
-EOF
 
 # build documentation
-cd src/docs/tex
-make %{?_smp_mflags}
+make %{?_smp_mflags} pdf-manual
+
+# build uforadiant
+make %{?_smp_mflags} uforadiant
 
 
 %install
 rm -rf %{buildroot}
+# we don't use
+#   make install_exec DESTDIR=%{buildroot}
+# simply because it does not work ...
+
+## client
 install -D -m 0755 ufo %{buildroot}%{_bindir}/ufo
-install -D -m 0755 ufoded %{buildroot}%{_bindir}
-install -p -m 0755 %{name}-wrapper.sh %{buildroot}%{_bindir}
-install -p -m 0755 ufoded-wrapper.sh %{buildroot}%{_bindir}
-install -D -m 0755 game.so %{buildroot}%{_libdir}/%{name}/game.so
+install -p -m 0755 %{SOURCE1} %{buildroot}%{_bindir}
+install -D -m 0644 debian/ufo.6 %{buildroot}%{_mandir}/man6/ufo.6
 mkdir -p -m 0755 %{buildroot}%{_datadir}/locale
 cp -pr base/i18n/* %{buildroot}%{_datadir}/locale/
-mkdir -p -m 0755 %{buildroot}%{_datadir}/icons/hicolor/32x32/apps
-cp -p src/ports/linux/ufo.png %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/%{name}.png
-cp -p src/ports/linux/ufoded.png %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/%{name}-ded.png
-desktop-file-install --vendor="fedora" \
-	--dir=%{buildroot}%{_datadir}/applications %{SOURCE1}
-desktop-file-install --vendor="fedora" \
-	--dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
 %find_lang %{name}
-# install documentation
+install -D -m 0644 debian/%{name}.xpm %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/%{name}.xpm
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications debian/ufoai.desktop
+
+## install common
+install -D -m 0755 game.so %{buildroot}%{_libdir}/%{name}/game.so
+
+## install doc
 mkdir -p -m 0755 %{buildroot}%{_docdir}/%{name}-%{version}
-cp -pr README CONTRIBUTORS COPYING src/docs/tex/*.pdf \
+cp -pr README COPYING src/docs/tex/*.pdf \
 	%{buildroot}%{_docdir}/%{name}-%{version}/
+
+## install server
+install -D -m 0755 ufoded %{buildroot}%{_bindir}
+install -D -m 0644 debian/ufoded.6 %{buildroot}%{_mandir}/man6/ufoded.6
+install -D -m 0644 debian/ufoded.xpm %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/ufoded.xpm
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications debian/ufoded.desktop
+
+## install tools
+install -D -m 0755 ufo2map %{buildroot}%{_bindir}
+install -D -m 0644 debian/ufo2map.6 %{buildroot}%{_mandir}/man6/ufo2map.6
+install -D -m 0755 ufomodel %{buildroot}%{_bindir}
+install -D src/tools/blender/md2tag_export.py %{buildroot}%{_datadir}/%{name}/tools/md2tag_export.py
+# not available in our sources
+#install -D -m 0644 contrib/scripts/bashcompletion/ufo2map %{buildroot}%{_sysconfdir}/bash_completion.d/ufo2map
+#install -D -m 0644 contrib/scripts/bashcompletion/ufomodel %{buildroot}%{_sysconfdir}/bash_completion.d/ufomodel
+
+## install uforadiant
+install -D -m 0755 radiant/uforadiant %{buildroot}%{_bindir}/uforadiant
+install -p -m 0755 %{SOURCE2} %{buildroot}%{_bindir}
+install -D -m 0644 debian/uforadiant.6 %{buildroot}%{_mandir}/man6/uforadiant.6
+install -D -m 0755 radiant/plugins/brushexport.so %{buildroot}%{_libdir}/uforadiant/brushexport.so
+mkdir -p -m 0755 %{buildroot}%{_datadir}/uforadiant
+cp -pr radiant/bitmaps %{buildroot}%{_datadir}/uforadiant
+cp -pr radiant/games %{buildroot}%{_datadir}/uforadiant
+cp -pr radiant/prefabs %{buildroot}%{_datadir}/uforadiant
+cp -pr radiant/shaders %{buildroot}%{_datadir}/uforadiant
+cp -pr radiant/sourceviewer %{buildroot}%{_datadir}/uforadiant
+cp -pr radiant/i18n/* %{buildroot}%{_datadir}/locale/
+%find_lang uforadiant
+install -D -m 0644 debian/uforadiant.xpm %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/uforadiant.xpm
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications debian/uforadiant.desktop
 
 
 %clean
@@ -124,7 +212,35 @@ if [ -x %{_bindir}/gtk-update-icon-cache ]; then
 fi
 
 
+%post server
+touch --no-create %{_datadir}/icons/hicolor
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+fi
+
+
+%post uforadiant
+touch --no-create %{_datadir}/icons/hicolor
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+fi
+
+
 %postun
+touch --no-create %{_datadir}/icons/hicolor
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+fi
+
+
+%postun server
+touch --no-create %{_datadir}/icons/hicolor
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+fi
+
+
+%postun uforadiant
 touch --no-create %{_datadir}/icons/hicolor
 if [ -x %{_bindir}/gtk-update-icon-cache ]; then
 	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
@@ -136,24 +252,69 @@ fi
 # we need to use full path so %doc does not the cleanup
 %dir %{_docdir}/%{name}-%{version}
 %doc %{_docdir}/%{name}-%{version}/README
-%doc %{_docdir}/%{name}-%{version}/CONTRIBUTORS
 %doc %{_docdir}/%{name}-%{version}/COPYING
-%{_bindir}/*
+%{_bindir}/ufo
+%{_bindir}/ufoai-wrapper.sh
+%{_datadir}/applications/ufoai.desktop
+%{_datadir}/icons/hicolor/32x32/apps/ufoai.xpm
+%doc %{_mandir}/man6/ufo.6*
+
+
+%files common
+%defattr(-,root,root,-)
 %{_libdir}/%{name}/
-%{_datadir}/applications/*
 %dir %{_datadir}/icons/hicolor/
 %dir %{_datadir}/icons/hicolor/32x32/
-%{_datadir}/icons/hicolor/32x32/apps/
+%dir %{_datadir}/icons/hicolor/32x32/apps/
 
 
 %files doc
 %defattr(-,root,root,-)
 %dir %{_docdir}/%{name}-%{version}
-%doc %{_docdir}/%{name}-%{version}/*.pdf
-%lang(en) %{_docdir}/%{name}-%{version}/ufo-manual_EN.pdf
+#%doc %{_docdir}/%{name}-%{version}/*.pdf
+%lang(en) %doc %{_docdir}/%{name}-%{version}/ufo-manual_EN.pdf
+
+
+%files server
+%defattr(-,root,root,-)
+%{_bindir}/ufoded
+%{_datadir}/applications/ufoded.desktop
+%{_datadir}/icons/hicolor/32x32/apps/ufoded.xpm
+%doc %{_mandir}/man6/ufoded.6*
+
+
+%files tools
+%defattr(-,root,root,-)
+%{_bindir}/ufo2map
+%{_bindir}/ufomodel
+%dir %{_datadir}/%{name}/
+# not available in our sources
+#%{_sysconfdir}/bash_completion.d/
+%doc %{_mandir}/man6/ufo2map.6*
+%{_datadir}/%{name}/tools/
+
+
+%files uforadiant -f uforadiant.lang
+%defattr(-,root,root,-)
+%{_bindir}/uforadiant
+%{_bindir}/uforadiant-wrapper.sh
+%{_datadir}/applications/uforadiant.desktop
+%{_datadir}/icons/hicolor/32x32/apps/uforadiant.xpm
+%{_datadir}/uforadiant/
+%{_libdir}/uforadiant/
+%doc %{_mandir}/man6/uforadiant.6*
+%{_datadir}/%{name}/tools/md2tag_export.py
 
 
 %changelog
+* Tue Sep 14 2010 Karel Volny <kvolny@redhat.com> 2.3-1
+- Version bump
+- Fixes RPMFusion bug #1305
+- Adjusted BuildRequires
+- Split Radiant (the map editor), tools, server and common subpackages
+- Install manpages and other goodies from debian subdirectory
+- Removed ufoded wrapper, no longer needed
+
 * Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 2.2.1-4
 - rebuild for new F11 features
 
