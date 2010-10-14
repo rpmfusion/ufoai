@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.3
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -307,6 +307,9 @@ fi
 
 
 %changelog
+* Thu Oct 14 2010 Nicolas Chauvet <kwizart@gmail.com> - 2.3-2
+- Rebuilt for gcc bug
+
 * Tue Sep 14 2010 Karel Volny <kvolny@redhat.com> 2.3-1
 - Version bump
 - Fixes RPMFusion bug #1305
