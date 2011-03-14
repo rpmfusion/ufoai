@@ -1,6 +1,6 @@
 Name:		ufoai
-Version:	2.3
-Release:	2%{?dist}
+Version:	2.3.1
+Release:	1%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -12,7 +12,6 @@ Source2:	uforadiant-wrapper.sh
 Patch0:		ufoai-2.3-no-lua.patch
 Patch1:		ufoai-2.3-radiant-ldl.patch
 Patch2:		ufoai-2.3-desktop-files.patch
-Patch3:		ufoai-2.3-libdir.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -117,23 +116,19 @@ This package contains the UFORadiant map editor.
 
 %prep
 %setup -q -n %{name}-%{version}-source
-# allow to set the library path
-#%patch -p1
 # ufoai-2.3-no-lua.patch - disable bundled lua
 %patch0 -p0
 # ufoai-2.3-radiant-ldl.patch - add 'ldl' to RADIANT_LIBS
-%patch1 -p0
+# need to use fuzz, the Makefile has changed since 2.3
+%patch1 -F2 -p0
 # ufoai-2.3-desktop-files.patch - fix executable and icon names
 %patch2 -p0
 ## we do not like "arch-dependent-file" in /usr/share
 # change the target for the library
 sed -i -e "s/base/./" build/game.mk
-# ufoai-2.3-libdir.patch - search for the library within system library path
-%patch3 -p0
 
 
 %build
-#%configure --disable-ufo2map --disable-uforadiant --enable-release
 %configure --enable-release
 make %{?_smp_mflags}
 make %{?_smp_mflags} lang
@@ -148,7 +143,7 @@ make %{?_smp_mflags} uforadiant
 %install
 rm -rf %{buildroot}
 # we don't use
-#   make install_exec DESTDIR=%{buildroot}
+#   make install_exec DESTDIR=%%{buildroot}
 # simply because it does not work ...
 
 ## client
@@ -181,8 +176,8 @@ install -D -m 0644 debian/ufo2map.6 %{buildroot}%{_mandir}/man6/ufo2map.6
 install -D -m 0755 ufomodel %{buildroot}%{_bindir}
 install -D src/tools/blender/md2tag_export.py %{buildroot}%{_datadir}/%{name}/tools/md2tag_export.py
 # not available in our sources
-#install -D -m 0644 contrib/scripts/bashcompletion/ufo2map %{buildroot}%{_sysconfdir}/bash_completion.d/ufo2map
-#install -D -m 0644 contrib/scripts/bashcompletion/ufomodel %{buildroot}%{_sysconfdir}/bash_completion.d/ufomodel
+#install -D -m 0644 contrib/scripts/bashcompletion/ufo2map %%{buildroot}%%{_sysconfdir}/bash_completion.d/ufo2map
+#install -D -m 0644 contrib/scripts/bashcompletion/ufomodel %%{buildroot}%%{_sysconfdir}/bash_completion.d/ufomodel
 
 ## install uforadiant
 install -D -m 0755 radiant/uforadiant %{buildroot}%{_bindir}/uforadiant
@@ -249,7 +244,7 @@ fi
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-# we need to use full path so %doc does not the cleanup
+# we need to use full path so %%doc does not the cleanup
 %dir %{_docdir}/%{name}-%{version}
 %doc %{_docdir}/%{name}-%{version}/README
 %doc %{_docdir}/%{name}-%{version}/COPYING
@@ -271,7 +266,6 @@ fi
 %files doc
 %defattr(-,root,root,-)
 %dir %{_docdir}/%{name}-%{version}
-#%doc %{_docdir}/%{name}-%{version}/*.pdf
 %lang(en) %doc %{_docdir}/%{name}-%{version}/ufo-manual_EN.pdf
 
 
@@ -289,7 +283,7 @@ fi
 %{_bindir}/ufomodel
 %dir %{_datadir}/%{name}/
 # not available in our sources
-#%{_sysconfdir}/bash_completion.d/
+#%%{_sysconfdir}/bash_completion.d/
 %doc %{_mandir}/man6/ufo2map.6*
 %{_datadir}/%{name}/tools/
 
@@ -307,6 +301,14 @@ fi
 
 
 %changelog
+* Mon Mar 14 2011 Karel Volny <kvolny@redhat.com> 2.3.1-1
+- Version bump
+- Fixes RPMFusion bug #1546
+- See the release annoucement for list of changes:
+  http://ufoai.ninex.info/wiki/index.php/News/2010#UFO:_Alien_Invasion_2.3_released
+- .spec cleanup
+- Adds workaround for crash on Intel cards
+
 * Thu Oct 14 2010 Nicolas Chauvet <kwizart@gmail.com> - 2.3-2
 - Rebuilt for gcc bug
 
