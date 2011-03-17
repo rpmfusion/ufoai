@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.3.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -12,6 +12,7 @@ Source2:	uforadiant-wrapper.sh
 Patch0:		ufoai-2.3-no-lua.patch
 Patch1:		ufoai-2.3-radiant-ldl.patch
 Patch2:		ufoai-2.3-desktop-files.patch
+Patch3:		ufoai-2.3.1-radiant-apppath.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -61,7 +62,7 @@ Summary:	UFO: Alien Invasion map editor
 Group:		Development/Tools
 BuildRequires:	gtkglext-devel
 BuildRequires:	gtksourceview2-devel
-Requires:	%{name}-ufo2map
+Requires:	%{name}-tools
 
 
 %description
@@ -123,6 +124,8 @@ This package contains the UFORadiant map editor.
 %patch1 -F2 -p0
 # ufoai-2.3-desktop-files.patch - fix executable and icon names
 %patch2 -p0
+# ufoai-2.3.1-radiant-apppath.patch - fix test for appPath
+%patch3 -p0
 ## we do not like "arch-dependent-file" in /usr/share
 # change the target for the library
 sed -i -e "s/base/./" build/game.mk
@@ -184,12 +187,12 @@ install -D -m 0755 radiant/uforadiant %{buildroot}%{_bindir}/uforadiant
 install -p -m 0755 %{SOURCE2} %{buildroot}%{_bindir}
 install -D -m 0644 debian/uforadiant.6 %{buildroot}%{_mandir}/man6/uforadiant.6
 install -D -m 0755 radiant/plugins/brushexport.so %{buildroot}%{_libdir}/uforadiant/brushexport.so
-mkdir -p -m 0755 %{buildroot}%{_datadir}/uforadiant
-cp -pr radiant/bitmaps %{buildroot}%{_datadir}/uforadiant
-cp -pr radiant/games %{buildroot}%{_datadir}/uforadiant
-cp -pr radiant/prefabs %{buildroot}%{_datadir}/uforadiant
-cp -pr radiant/shaders %{buildroot}%{_datadir}/uforadiant
-cp -pr radiant/sourceviewer %{buildroot}%{_datadir}/uforadiant
+mkdir -p -m 0755 %{buildroot}%{_datadir}/%{name}/radiant
+cp -pr radiant/bitmaps %{buildroot}%{_datadir}/%{name}/radiant
+cp -pr radiant/games %{buildroot}%{_datadir}/%{name}/radiant
+cp -pr radiant/prefabs %{buildroot}%{_datadir}/%{name}/radiant
+cp -pr radiant/shaders %{buildroot}%{_datadir}/%{name}/radiant
+cp -pr radiant/sourceviewer %{buildroot}%{_datadir}/%{name}/radiant
 cp -pr radiant/i18n/* %{buildroot}%{_datadir}/locale/
 %find_lang uforadiant
 install -D -m 0644 debian/uforadiant.xpm %{buildroot}%{_datadir}/icons/hicolor/32x32/apps/uforadiant.xpm
@@ -294,13 +297,19 @@ fi
 %{_bindir}/uforadiant-wrapper.sh
 %{_datadir}/applications/uforadiant.desktop
 %{_datadir}/icons/hicolor/32x32/apps/uforadiant.xpm
-%{_datadir}/uforadiant/
+%{_datadir}/%{name}/radiant/
 %{_libdir}/uforadiant/
 %doc %{_mandir}/man6/uforadiant.6*
 %{_datadir}/%{name}/tools/md2tag_export.py
 
 
 %changelog
+* Thu Mar 17 2011 Karel Volny <kvolny@redhat.com> 2.3.1-2
+- Fixes RPMFusion bug #1555 (dependency typo for uforadiant)
+- Fixes uforadiant install paths
+- Adds patch for appPath issue, see
+  https://sourceforge.net/tracker/?func=detail&aid=3219962&group_id=157793&atid=805242
+
 * Mon Mar 14 2011 Karel Volny <kvolny@redhat.com> 2.3.1-1
 - Version bump
 - Fixes RPMFusion bug #1546
