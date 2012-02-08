@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.3.1
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -304,6 +304,9 @@ fi
 
 
 %changelog
+* Thu Feb 09 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Thu Mar 17 2011 Karel Volny <kvolny@redhat.com> 2.3.1-2
 - Fixes RPMFusion bug #1555 (dependency typo for uforadiant)
 - Fixes uforadiant install paths
