@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.3.1
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -304,6 +304,9 @@ fi
 
 
 %changelog
+* Thu Mar 08 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-4
+- Rebuilt for c++ ABI breakage
+
 * Thu Feb 09 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
