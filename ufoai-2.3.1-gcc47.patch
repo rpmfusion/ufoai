@@ -1,0 +1,11 @@
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/math/Vector3.h.gcc47 ufoai-2.3.1-source/src/tools/radiant/libs/math/Vector3.h
+--- ufoai-2.3.1-source/src/tools/radiant/libs/math/Vector3.h.gcc47	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/math/Vector3.h	2012-05-16 00:06:02.329926206 +0200
+@@ -14,6 +14,7 @@
+  * execute an inner product of two vectors.
+  */
+ 
++#include "FloatTools.h"
+ #include "lrint.h"
+ #include <sstream>
+ #include <string>

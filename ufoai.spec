@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.3.1
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -13,6 +13,9 @@ Patch0:		ufoai-2.3-no-lua.patch
 Patch1:		ufoai-2.3-radiant-ldl.patch
 Patch2:		ufoai-2.3-desktop-files.patch
 Patch3:		ufoai-2.3.1-radiant-apppath.patch
+Patch4:		ufoai-2.3.1-zpng.patch
+Patch5:         ufoai-2.3.1-gcc47.patch
+Patch6:		ufoai-2.3.1-glib.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -129,6 +132,9 @@ This package contains the UFORadiant map editor.
 ## we do not like "arch-dependent-file" in /usr/share
 # change the target for the library
 sed -i -e "s/base/./" build/game.mk
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1 -b .glib
 
 
 %build
@@ -304,6 +310,9 @@ fi
 
 
 %changelog
+* Tue May 15 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-5
+- Fix FTBFS
+
 * Thu Mar 08 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-4
 - Rebuilt for c++ ABI breakage
 

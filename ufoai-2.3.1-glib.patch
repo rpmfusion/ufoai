@@ -1,0 +1,102 @@
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/convert.h.glib ufoai-2.3.1-source/src/tools/radiant/libs/convert.h
+--- ufoai-2.3.1-source/src/tools/radiant/libs/convert.h.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/convert.h	2012-05-16 00:26:47.676522158 +0200
+@@ -27,8 +27,7 @@
+ 
+ #include "debugging/debugging.h"
+ #include <algorithm>
+-#include <glib/gunicode.h>
+-#include <glib/gconvert.h>
++#include <glib.h>
+ 
+ #include "character.h"
+ 
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/entity/miscparticle.cpp.glib ufoai-2.3.1-source/src/tools/radiant/libs/entity/miscparticle.cpp
+--- ufoai-2.3.1-source/src/tools/radiant/libs/entity/miscparticle.cpp.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/entity/miscparticle.cpp	2012-05-16 00:31:37.607581992 +0200
+@@ -39,7 +39,7 @@
+ #include "math/line.h"
+ 
+ #include "ifilesystem.h"
+-#include <glib/gslist.h>
++#include <glib.h>
+ 
+ #include "targetable.h"
+ #include "origin.h"
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/cursor.h.glib ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/cursor.h
+--- ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/cursor.h.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/cursor.h	2012-05-16 00:26:47.677522162 +0200
+@@ -22,7 +22,7 @@
+ #if !defined(INCLUDED_GTKUTIL_CURSOR_H)
+ #define INCLUDED_GTKUTIL_CURSOR_H
+ 
+-#include <glib/gmain.h>
++#include <glib.h>
+ #include <gdk/gdkevents.h>
+ #include <gtk/gtkwidget.h>
+ #include <gtk/gtkwindow.h>
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/IConv.h.glib ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/IConv.h
+--- ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/IConv.h.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/IConv.h	2012-05-16 00:26:47.677522162 +0200
+@@ -1,10 +1,7 @@
+ #ifndef _GTKUTIL_ICONV_H
+ #define _GTKUTIL_ICONV_H
+ 
+-#include <glib/gconvert.h>
+-#include <glib/gmessages.h>
+-#include <glib/gunicode.h>
+-#include <glib/gmem.h>
++#include <glib.h>
+ #include <string>
+ 
+ #include <cassert>
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/idledraw.h.glib ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/idledraw.h
+--- ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/idledraw.h.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/gtkutil/idledraw.h	2012-05-16 00:26:47.678522166 +0200
+@@ -22,7 +22,7 @@
+ #if !defined(INCLUDED_GTKUTIL_IDLEDRAW_H)
+ #define INCLUDED_GTKUTIL_IDLEDRAW_H
+ 
+-#include <glib/gmain.h>
++#include <glib.h>
+ 
+ #include "generic/callback.h"
+ 
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/os/dir.h.glib ufoai-2.3.1-source/src/tools/radiant/libs/os/dir.h
+--- ufoai-2.3.1-source/src/tools/radiant/libs/os/dir.h.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/os/dir.h	2012-05-16 00:26:47.678522166 +0200
+@@ -27,7 +27,7 @@
+ #if !defined(INCLUDED_OS_DIR_H)
+ #define INCLUDED_OS_DIR_H
+ 
+-#include <glib/gdir.h>
++#include <glib.h>
+ 
+ typedef GDir Directory;
+ 
+diff -up ufoai-2.3.1-source/src/tools/radiant/libs/shaders/shaders.cpp.glib ufoai-2.3.1-source/src/tools/radiant/libs/shaders/shaders.cpp
+--- ufoai-2.3.1-source/src/tools/radiant/libs/shaders/shaders.cpp.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/libs/shaders/shaders.cpp	2012-05-16 00:31:11.319485974 +0200
+@@ -51,7 +51,7 @@
+ #include "iradiant.h"
+ #include "irender.h"
+ 
+-#include <glib/gslist.h>
++#include <glib.h>
+ 
+ #include "AutoPtr.h"
+ #include "debugging/debugging.h"
+diff -up ufoai-2.3.1-source/src/tools/radiant/radiant/vfs.cpp.glib ufoai-2.3.1-source/src/tools/radiant/radiant/vfs.cpp
+--- ufoai-2.3.1-source/src/tools/radiant/radiant/vfs.cpp.glib	2010-11-29 17:46:35.000000000 +0100
++++ ufoai-2.3.1-source/src/tools/radiant/radiant/vfs.cpp	2012-05-16 00:26:47.679522170 +0200
+@@ -45,9 +45,7 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <glib/gslist.h>
+-#include <glib/gdir.h>
+-#include <glib/gstrfuncs.h>
++#include <glib.h>
+ 
+ #include "AutoPtr.h"
+ #include "iradiant.h"
