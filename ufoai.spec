@@ -1,6 +1,6 @@
 Name:		ufoai
-Version:	2.3.1
-Release:	5%{?dist}
+Version:	2.4
+Release:	1%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -9,13 +9,7 @@ URL:		http://ufoai.sourceforge.net/
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}-source.tar.bz2
 Source1:	%{name}-wrapper.sh
 Source2:	uforadiant-wrapper.sh
-Patch0:		ufoai-2.3-no-lua.patch
-Patch1:		ufoai-2.3-radiant-ldl.patch
-Patch2:		ufoai-2.3-desktop-files.patch
-Patch3:		ufoai-2.3.1-radiant-apppath.patch
-Patch4:		ufoai-2.3.1-zpng.patch
-Patch5:         ufoai-2.3.1-gcc47.patch
-Patch6:		ufoai-2.3.1-glib.patch
+Patch0:		ufoai-2.3-desktop-files.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -120,30 +114,35 @@ This package contains the UFORadiant map editor.
 
 %prep
 %setup -q -n %{name}-%{version}-source
-# ufoai-2.3-no-lua.patch - disable bundled lua
-%patch0 -p0
-# ufoai-2.3-radiant-ldl.patch - add 'ldl' to RADIANT_LIBS
-# need to use fuzz, the Makefile has changed since 2.3
-%patch1 -F2 -p0
 # ufoai-2.3-desktop-files.patch - fix executable and icon names
-%patch2 -p0
-# ufoai-2.3.1-radiant-apppath.patch - fix test for appPath
-%patch3 -p0
-## we do not like "arch-dependent-file" in /usr/share
-# change the target for the library
-sed -i -e "s/base/./" build/game.mk
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1 -b .glib
+%patch0 -p0
+# maps and models are in ufoai-data package, do not try to build them
+sed -i -e "/maps.mk/d" Makefile
+sed -i -e "/models.mk/d" Makefile
+# we don't use any of the installers
+sed -i -e "/install.mk/d" Makefile
 
 
 %build
-%configure --enable-release
+# don't use %%configure, UFOAI doesn't like default configure options
+./configure \
+	--disable-dependency-tracking \
+	--prefix=%{_prefix} \
+	--bindir=%{_bindir} \
+	--datadir=%{_datadir}/%{name} \
+	--libdir=%{_libdir}/%{name} \
+	--localedir=%{_datarootdir}/locale \
+	--enable-ufoded \
+	--enable-uforadiant \
+	--enable-ufo2map \
+	--enable-ufomodel \
+	--enable-release
+
 make %{?_smp_mflags}
 make %{?_smp_mflags} lang
 
 # build documentation
-make %{?_smp_mflags} pdf-manual
+make %{?_smp_mflags} manual
 
 # build uforadiant
 make %{?_smp_mflags} uforadiant
@@ -166,12 +165,11 @@ install -D -m 0644 debian/%{name}.xpm %{buildroot}%{_datadir}/icons/hicolor/32x3
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications debian/ufoai.desktop
 
 ## install common
-install -D -m 0755 game.so %{buildroot}%{_libdir}/%{name}/game.so
+install -D -m 0755 base/game.so %{buildroot}%{_libdir}/%{name}/game.so
 
 ## install doc
 mkdir -p -m 0755 %{buildroot}%{_docdir}/%{name}-%{version}
-cp -pr README COPYING src/docs/tex/*.pdf \
-	%{buildroot}%{_docdir}/%{name}-%{version}/
+cp -pr README COPYING src/docs/tex/*.pdf %{buildroot}%{_docdir}/%{name}-%{version}/
 
 ## install server
 install -D -m 0755 ufoded %{buildroot}%{_bindir}
@@ -183,6 +181,7 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications debian/ufoded.de
 install -D -m 0755 ufo2map %{buildroot}%{_bindir}
 install -D -m 0644 debian/ufo2map.6 %{buildroot}%{_mandir}/man6/ufo2map.6
 install -D -m 0755 ufomodel %{buildroot}%{_bindir}
+install -D -m 0755 ufoslicer %{buildroot}%{_bindir}
 install -D src/tools/blender/md2tag_export.py %{buildroot}%{_datadir}/%{name}/tools/md2tag_export.py
 # not available in our sources
 #install -D -m 0644 contrib/scripts/bashcompletion/ufo2map %%{buildroot}%%{_sysconfdir}/bash_completion.d/ufo2map
@@ -192,12 +191,11 @@ install -D src/tools/blender/md2tag_export.py %{buildroot}%{_datadir}/%{name}/to
 install -D -m 0755 radiant/uforadiant %{buildroot}%{_bindir}/uforadiant
 install -p -m 0755 %{SOURCE2} %{buildroot}%{_bindir}
 install -D -m 0644 debian/uforadiant.6 %{buildroot}%{_mandir}/man6/uforadiant.6
-install -D -m 0755 radiant/plugins/brushexport.so %{buildroot}%{_libdir}/uforadiant/brushexport.so
 mkdir -p -m 0755 %{buildroot}%{_datadir}/%{name}/radiant
+cp -p radiant/*.xml %{buildroot}%{_datadir}/%{name}/radiant/
+cp -p radiant/mapdef.template %{buildroot}%{_datadir}/%{name}/radiant/
 cp -pr radiant/bitmaps %{buildroot}%{_datadir}/%{name}/radiant
-cp -pr radiant/games %{buildroot}%{_datadir}/%{name}/radiant
 cp -pr radiant/prefabs %{buildroot}%{_datadir}/%{name}/radiant
-cp -pr radiant/shaders %{buildroot}%{_datadir}/%{name}/radiant
 cp -pr radiant/sourceviewer %{buildroot}%{_datadir}/%{name}/radiant
 cp -pr radiant/i18n/* %{buildroot}%{_datadir}/locale/
 %find_lang uforadiant
@@ -290,6 +288,7 @@ fi
 %defattr(-,root,root,-)
 %{_bindir}/ufo2map
 %{_bindir}/ufomodel
+%{_bindir}/ufoslicer
 %dir %{_datadir}/%{name}/
 # not available in our sources
 #%%{_sysconfdir}/bash_completion.d/
@@ -304,12 +303,16 @@ fi
 %{_datadir}/applications/uforadiant.desktop
 %{_datadir}/icons/hicolor/32x32/apps/uforadiant.xpm
 %{_datadir}/%{name}/radiant/
-%{_libdir}/uforadiant/
 %doc %{_mandir}/man6/uforadiant.6*
-%{_datadir}/%{name}/tools/md2tag_export.py
 
 
 %changelog
+* Fri Jun 29 2012 Karel Volny <kvolny@redhat.com> 2.4-1
+- Version bump
+- Changelog: http://ufoai.org/wiki/index.php/Changelog/2.4
+- Fixed duplicate packaging of md2tag_export.py
+- Added ufoslicer to -tools
+
 * Tue May 15 2012 Nicolas Chauvet <kwizart@gmail.com> - 2.3.1-5
 - Fix FTBFS
 
