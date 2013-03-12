@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.4
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -307,6 +307,9 @@ fi
 
 
 %changelog
+* Tue Mar 12 2013 Nicolas Chauvet <kwizart@gmail.com> - 2.4-2
+- https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Fri Jun 29 2012 Karel Volny <kvolny@redhat.com> 2.4-1
 - Version bump
 - Changelog: http://ufoai.org/wiki/index.php/Changelog/2.4
