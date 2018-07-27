@@ -1,6 +1,6 @@
 Name:		ufoai
 Version:	2.4
-Release:	5%{?dist}
+Release:	6%{?dist}
 Summary:	UFO: Alien Invasion
 
 Group:		Amusements/Games
@@ -307,6 +307,9 @@ fi
 
 
 %changelog
+* Fri Jul 27 2018 RPM Fusion Release Engineering <sergio@serjux.com> - 2.4-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Fri Mar 02 2018 RPM Fusion Release Engineering <leigh123linux@googlemail.com> - 2.4-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
