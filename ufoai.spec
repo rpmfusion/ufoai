@@ -14,7 +14,7 @@ Patch0:		ufoai-2.3-desktop-files.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:	desktop-file-utils curl-devel freealut-devel gettext
-BuildRequires:	libjpeg-devel libogg-devel libpng-devel gcc
+BuildRequires:	libjpeg-devel libogg-devel libpng-devel gcc gcc-c++
 BuildRequires:	libtheora-devel
 BuildRequires:	libvorbis-devel
 BuildRequires:	libXxf86dga-devel libXxf86vm-devel
